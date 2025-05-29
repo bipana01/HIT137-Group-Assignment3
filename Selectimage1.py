@@ -109,6 +109,19 @@ class Imageapp:
         self.left_canvas.bind("<B1-Motion>", self.update_crop)
         self.left_canvas.bind("<ButtonRelease-1>", self.end_crop)
 
+        self.bind_shortcuts()
+
+    def bind_shortcuts(self):
+        self.root.bind_all("<Control-o>", lambda e: self.upload_image())
+        self.root.bind_all("<Control-s>", lambda e: self.save_image())
+        self.root.bind_all("<Control-z>", lambda e: self.undo())
+        self.root.bind_all("<Control-y>", lambda e: self.redo())
+        self.root.bind_all("<Control-r>", lambda e: self.reset_application())
+        self.root.bind_all("<h>", lambda e: self.flip_horizontal())
+        self.root.bind_all("<v>", lambda e: self.flip_vertical())
+        self.root.bind_all("<l>", lambda e: self.rotate_left())
+        self.root.bind_all("<r>", lambda e: self.rotate_right())
+
     def upload_image(self):
         file_path = filedialog.askopenfilename()
         if file_path:
@@ -263,30 +276,34 @@ class Imageapp:
 
     def flip_horizontal(self):
         if self.current_cropped_image is not None:
-            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
             self.current_cropped_image = cv2.flip(self.current_cropped_image, 1)
             self.display_cropped_image(self.current_cropped_image)
+            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
+            self.redo_stack.clear()
             self.update_button_states()
 
     def flip_vertical(self):
         if self.current_cropped_image is not None:
-            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
             self.current_cropped_image = cv2.flip(self.current_cropped_image, 0)
             self.display_cropped_image(self.current_cropped_image)
+            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
+            self.redo_stack.clear()
             self.update_button_states()
 
     def rotate_left(self):
         if self.current_cropped_image is not None:
-            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
             self.current_cropped_image = cv2.rotate(self.current_cropped_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
             self.display_cropped_image(self.current_cropped_image)
+            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
+            self.redo_stack.clear()
             self.update_button_states()
 
     def rotate_right(self):
         if self.current_cropped_image is not None:
-            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
             self.current_cropped_image = cv2.rotate(self.current_cropped_image, cv2.ROTATE_90_CLOCKWISE)
             self.display_cropped_image(self.current_cropped_image)
+            self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
+            self.redo_stack.clear()
             self.update_button_states()
 
 if __name__ == "__main__":
