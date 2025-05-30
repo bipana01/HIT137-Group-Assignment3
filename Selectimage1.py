@@ -1,3 +1,15 @@
+# Desktop Application to demonstrate understanding of OOP principles, 
+# GUI development using Tkinter &
+# Image Processing using OpenCV
+
+# Group  [CAS/DAN 05]
+# Bipana Tripathee : [SID: s388875]
+# Elijah Balanon Cantoria : [SID: s358778 ]
+# Sakshi Sakshi :  [SID: s386993]
+# Shreeya Regmi  :  [SID: s390356]
+
+
+
 import tkinter as tk
 from tkinter import filedialog, ttk
 import cv2
@@ -6,7 +18,9 @@ from PIL import Image, ImageTk
 class Imageapp:
     def __init__(self, root):
         self.root = root
+        # Title of image
         self.root.title("Image Processor")
+        # size of canvas
         self.root.geometry("1200x700")
 
         # Initialize application state
@@ -33,36 +47,44 @@ class Imageapp:
     def create_toolbar(self):
         self.toolbar = ttk.Frame(self.root)
         self.toolbar.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-
+        
+        # Upload Button
         self.upload_btn = ttk.Button(self.toolbar, text="Upload", command=self.upload_image)
         self.upload_btn.pack(side=tk.LEFT, padx=5)
-
+        
+        # Save Button
         self.save_btn = ttk.Button(self.toolbar, text="Save", command=self.save_image, state=tk.DISABLED)
         self.save_btn.pack(side=tk.LEFT, padx=5)
 
         self.undo_btn = ttk.Button(self.toolbar, text="Undo", command=self.undo, state=tk.DISABLED)
         self.undo_btn.pack(side=tk.LEFT, padx=5)
-
+        
+        # Redo Button
         self.redo_btn = ttk.Button(self.toolbar, text="Redo", command=self.redo, state=tk.DISABLED)
         self.redo_btn.pack(side=tk.LEFT, padx=5)
-
+        
+        # Reset Button
         self.reset_btn = ttk.Button(self.toolbar, text="Reset", command=self.reset_application)
         self.reset_btn.pack(side=tk.LEFT, padx=5)
         self.reset_btn.config(state=tk.DISABLED)
 
-        # New buttons
+        # Flip Horizontal Button
         self.flip_h_btn = ttk.Button(self.toolbar, text="Flip H", command=self.flip_horizontal)
         self.flip_h_btn.pack(side=tk.LEFT, padx=5)
-
+        
+        # Flip Vertical Button
         self.flip_v_btn = ttk.Button(self.toolbar, text="Flip V", command=self.flip_vertical)
         self.flip_v_btn.pack(side=tk.LEFT, padx=5)
-
+        
+        # Rotate Left Button
         self.rotate_left_btn = ttk.Button(self.toolbar, text="Rotate ⟲", command=self.rotate_left)
         self.rotate_left_btn.pack(side=tk.LEFT, padx=5)
-
+        
+        # Rotate Rignt Button
         self.rotate_right_btn = ttk.Button(self.toolbar, text="Rotate ⟳", command=self.rotate_right)
         self.rotate_right_btn.pack(side=tk.LEFT, padx=5)
-
+        
+        # Image Slider for resizing
     def create_slider(self):
         self.slider_frame = ttk.Frame(self.root)
         self.slider_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=5, pady=5)
@@ -77,7 +99,8 @@ class Imageapp:
         self.scale_value = ttk.Label(self.slider_frame, text="100%")
         self.scale_value.pack(side=tk.LEFT, padx=5)
         self.scale_slider.config(state=tk.DISABLED)
-
+        
+        # Create The Canvas
     def create_canvases(self):
         self.paned_window = tk.PanedWindow(self.root, orient=tk.HORIZONTAL, sashwidth=5)
         self.paned_window.pack(fill=tk.BOTH, expand=True)
@@ -121,7 +144,8 @@ class Imageapp:
         self.root.bind_all("<v>", lambda e: self.flip_vertical())
         self.root.bind_all("<l>", lambda e: self.rotate_left())
         self.root.bind_all("<r>", lambda e: self.rotate_right())
-
+        
+        # Upload the image
     def upload_image(self):
         file_path = filedialog.askopenfilename()
         if file_path:
@@ -131,7 +155,8 @@ class Imageapp:
                 self.display_image_left()
                 self.scale_slider.config(state=tk.NORMAL)
                 self.update_button_states()
-
+                
+    # Display The image            
     def display_image_left(self):
         rgb_image = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2RGB)
         pil_image = Image.fromarray(rgb_image)
@@ -246,7 +271,8 @@ class Imageapp:
             new_height = int(self.current_cropped_image.shape[0] * scale_factor)
             resized = cv2.resize(self.current_cropped_image, (new_width, new_height), interpolation=cv2.INTER_LANCZOS4)
             cv2.imwrite(file_path, resized)
-
+            
+    # Undo the changes
     def undo(self):
         if self.undo_stack:
             if self.current_cropped_image is not None:
@@ -256,7 +282,8 @@ class Imageapp:
             self.scale_value.config(text=f"{self.resize_scale}%")
             self.display_cropped_image(self.current_cropped_image)
             self.update_button_states()
-
+    
+    # Redo Changes 
     def redo(self):
         if self.redo_stack:
             if self.current_cropped_image is not None:
@@ -273,7 +300,8 @@ class Imageapp:
         self.undo_btn.config(state=tk.NORMAL if self.undo_stack else tk.DISABLED)
         self.redo_btn.config(state=tk.NORMAL if self.redo_stack else tk.DISABLED)
         self.reset_btn.config(state=tk.NORMAL if self.original_image is not None else tk.DISABLED)
-
+        
+    # Flip the cropped Image Horizontally
     def flip_horizontal(self):
         if self.current_cropped_image is not None:
             self.current_cropped_image = cv2.flip(self.current_cropped_image, 1)
@@ -281,7 +309,8 @@ class Imageapp:
             self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
             self.redo_stack.clear()
             self.update_button_states()
-
+            
+    # Flip the cropped Image Vertically        
     def flip_vertical(self):
         if self.current_cropped_image is not None:
             self.current_cropped_image = cv2.flip(self.current_cropped_image, 0)
@@ -289,7 +318,8 @@ class Imageapp:
             self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
             self.redo_stack.clear()
             self.update_button_states()
-
+            
+    # Rotate The cropped image to the Left        
     def rotate_left(self):
         if self.current_cropped_image is not None:
             self.current_cropped_image = cv2.rotate(self.current_cropped_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
@@ -297,7 +327,8 @@ class Imageapp:
             self.undo_stack.append((self.current_cropped_image.copy(), self.resize_scale))
             self.redo_stack.clear()
             self.update_button_states()
-
+            
+    # Rotate the cropped image to the Right        
     def rotate_right(self):
         if self.current_cropped_image is not None:
             self.current_cropped_image = cv2.rotate(self.current_cropped_image, cv2.ROTATE_90_CLOCKWISE)
