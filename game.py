@@ -1,10 +1,3 @@
-'''Group name: CAS/DAN 05
-   Group members:
-    Bipana Tripathee[SID: 388875]
-    Elijah cantoria[SID:358778 ]
-    Sakshi Sakshi[SID:386993]
-    Shreeya Regmi[SID:390356 ]'''
-
 # These are the standards library imports.
 import os
 import random
